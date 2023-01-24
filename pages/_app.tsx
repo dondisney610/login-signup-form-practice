@@ -8,12 +8,15 @@ import { useRouter } from "next/router";
 export default function App({ Component, pageProps }: AppProps) {
   const currentUser = useUser();
   const router = useRouter();
+  let pathname = router.pathname;
 
   useEffect(() => {
-    if (!currentUser) {
-      router.push("/signup");
+    if (pathname !== "/signup") {
+      if (!currentUser) {
+        router.push("/login");
+      }
     }
-  }, [currentUser, router]);
+  }, [currentUser, pathname]);
   return (
     <ChakraProvider>
       <Component {...pageProps} />
