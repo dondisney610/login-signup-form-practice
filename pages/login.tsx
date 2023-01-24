@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -13,11 +13,11 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
+import Link from "next/link";
 
 type Inputs = {
   email: string;
   password: string;
-  confirmationPassword: string;
 };
 const Login = () => {
   const {
@@ -34,7 +34,7 @@ const Login = () => {
   const login = async (email: string, password: string) => {
     try {
       setIsProcessingLogin(true);
-      await createUserWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       setIsProcessingLogin(false);
     } catch (e) {
       alert(e);
@@ -42,23 +42,15 @@ const Login = () => {
     }
   };
 
-  const onSubmit: SubmitHandler<Inputs> = ({
-    email,
-    password,
-    confirmationPassword,
-  }) => {
-    if (password === confirmationPassword) {
-      login(email, password);
-    } else {
-      alert("パスワードが一致しません。");
-    }
+  const onSubmit: SubmitHandler<Inputs> = ({ email, password }) => {
+    login(email, password);
   };
 
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     router.push("/");
-  //   }
-  // }, [currentUser, router]);
+  useEffect(() => {
+    if (currentUser) {
+      router.push("/");
+    }
+  }, [currentUser, router]);
 
   return (
     <Flex>
@@ -109,20 +101,11 @@ const Login = () => {
                 size="lg"
                 mb="8"
               />
-              <FormLabel fontWeight="bold">パスワード再入力</FormLabel>
-              {errors.confirmationPassword && (
-                <Text color="red.400" mb="8px">
-                  パスワード再入力は必須です
-                </Text>
-              )}
-              <Input
-                type="password"
-                {...register("confirmationPassword", { required: true })}
-                size="lg"
-                mb="8"
-              />
-
               <Flex flexDirection="column">
+                <Text mb="8" textAlign="center">
+                  アカウント作成は
+                  <Link href="/signup">こちら</Link>
+                </Text>
                 <Button
                   type="submit"
                   color="white"
